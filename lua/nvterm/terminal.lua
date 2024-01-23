@@ -59,7 +59,11 @@ local ensure_and_send = function(cmd, type)
     end
   end
   local term = select_term()
-  a.nvim_chan_send(term.job_id, cmd .. "\n")
+  if vim.loop.os_uname().sysname == "Windows_NT" then
+    a.nvim_chan_send(term.job_id, cmd .. "\r")
+  else
+    a.nvim_chan_send(term.job_id, cmd .. "\n")
+  end
 end
 
 local call_and_restore = function(fn, opts)
@@ -151,7 +155,6 @@ nvterm.toggle_all_terms = function()
     end
   end
 end
-
 
 nvterm.close_all_terms = function()
   for _, buf in ipairs(nvterm.list_active_terms "buf") do
